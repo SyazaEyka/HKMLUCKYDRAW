@@ -479,24 +479,27 @@
                 // ==========================================
                 // HANTAR DATA KE GOOGLE SHEETS
                 // ==========================================
-                // GANTIKAN URL DI BAWAH DENGAN URL GOOGLE APPS SCRIPT ANDA
-                const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxAA_ViSeoUol8q0xcU8DVVr3937n3rLxXdCllKtFzhU0U2UFpCCcuuY1eSzbla00DT9w/exec"; 
+                const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxAA_ViSeoUol8q0xcU8DVVr3937n3rLxXdCllKtFzhU0U2UFpCCcuuY1eSzbla00DT9w/exec"; // Pastikan ini URL anda
                 
-                if (GOOGLE_SHEETS_URL !== "https://script.google.com/macros/s/AKfycbxAA_ViSeoUol8q0xcU8DVVr3937n3rLxXdCllKtFzhU0U2UFpCCcuuY1eSzbla00DT9w/exec") {
-                    try {
-                        const formData = new URLSearchParams();
-                        formData.append('id', dataPeserta.id);
-                        formData.append('nama', dataPeserta.nama);
-                        formData.append('telefon', dataPeserta.telefon);
+                try {
+                    // KEMASKINI: Guna URLSearchParams yang lebih stabil untuk Google Apps Script
+                    const formParams = new URLSearchParams();
+                    formParams.append('id', dataPeserta.id);
+                    formParams.append('nama', dataPeserta.nama);
+                    formParams.append('telefon', dataPeserta.telefon);
 
-                        // Hantar tanpa menghalang kelajuan sistem (background task)
-                        fetch(GOOGLE_SHEETS_URL, {
-                            method: 'POST',
-                            body: formData
-                        }).catch(err => console.error("Ralat ke Google Sheets:", err));
-                    } catch (err) {
-                        console.error("Gagal sediakan data ke Sheets:", err);
-                    }
+                    // Hantar dengan mode: 'no-cors'
+                    fetch(GOOGLE_SHEETS_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: formParams
+                    }).then(() => {
+                        console.log("Data berjaya dihantar ke Sheets (status disorok oleh no-cors)");
+                    }).catch(err => {
+                        console.error("Ralat ke Google Sheets:", err);
+                    });
+                } catch (err) {
+                    console.error("Gagal sediakan data ke Sheets:", err);
                 }
                 // ==========================================
 
